@@ -1,0 +1,31 @@
+= fluent-plugin-solr
+
+= Solr output plugin for Fluent
+
+== Configuration
+
+    <match solr.**>                              # solr's key is hostname + tags + event.time.
+      type solr                        # 
+
+      # following attibutes are optional
+      host localhost                        # solr's hostname. default localhost
+      port 9160                             # solr's port. default 8983
+      core                                  # solr's core name.
+
+    </match>
+
+== Contributing to fluent-plugin-solr
+ 
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+
+== Copyright
+
+Copyright (c) 2011 Nobutaka Nakazawa. See LICENSE.txt for
+further details.
+
