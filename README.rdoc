@@ -9,7 +9,7 @@
 
       # following attibutes are optional
       host localhost                        # solr's hostname. default localhost
-      port 9160                             # solr's port. default 8983
+      port 8983                             # solr's port. default 8983
       core                                  # solr's core name.
 
     </match>

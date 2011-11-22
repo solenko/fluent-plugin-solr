@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "fluent-plugin-solr"
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nobutaka Nakazawa"]
@@ -24,8 +24,7 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "lib/fluent/plugin/out_solr.rb",
-    "lib/solr/request/commit.rb"
+    "lib/fluent/plugin/out_solr.rb"
   ]
   s.homepage = "http://github.com/btigit/fluent-plugin-solr"
   s.licenses = ["MIT"]

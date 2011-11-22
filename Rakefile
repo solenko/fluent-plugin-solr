@@ -21,10 +21,10 @@ Jeweler::Tasks.new do |gem|
   gem.description = "Solr output plugin for Fluent event collector"
   gem.email = "nakazawa.nobutaka@brains-tech.co.jp"
   gem.authors = ["Nobutaka Nakazawa"]
-  gem.version = '0.1.0'
+  gem.version = '0.1.1'
   gem.add_dependency("fluentd", "~> 0.10.0")
   gem.add_dependency("solr-ruby", "~> 0.0.8")
-  gem.files = FileList['lib/fluent/plugin/out_solr.rb', 'lib/solr/request/commit.rb', '[A-Z]*'].to_a
+  gem.files = FileList['lib/fluent/plugin/out_solr.rb', '[A-Z]*'].to_a
   gem.bindir = '/etc/fluent/plugin'
 
 end
