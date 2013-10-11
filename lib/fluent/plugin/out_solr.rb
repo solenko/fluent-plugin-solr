@@ -6,9 +6,14 @@ class SolrOutput < Fluent::BufferedOutput
   Fluent::Plugin.register_output('solr', self)
   include SetTimeKeyMixin
   include SetTagKeyMixin
-  config_set_default :include_time_key, true
-  config_set_default :include_tag_key, true
+  config_set_default :include_time_key, false
+  config_set_default :include_tag_key, false
   config_set_default :time_format, "%Y%m%d%H%M%S%L"
+
+  attr_reader :host
+  attr_reader :path
+  attr_reader :port
+  attr_reader :core
 
   def initialize
     super
@@ -19,15 +24,17 @@ class SolrOutput < Fluent::BufferedOutput
   def configure(conf)
     super
 
-    @host = conf.has_key?('host') ? conf['host'] : 'localhost'
-    @port = conf.has_key?('port') ? conf['port'] : '8983'
-    @core = conf.has_key?('core') ? conf['core'] : ''
+    @host = conf.fetch('host', 'localhost')
+    @path = conf.fetch('path', 'solr')
+    @port = conf.fetch('port', '8983')
+
+    @core = conf.fetch('core', '')
 
   end
 
   def start
     super
-    @connection = Solr::Connection.new('http://'+@host+':'+@port+'/solr/'+@core)
+    @connection = RSolr.connect :url => "http://#{host}:#{port}/#{path}/#{core}"
   end
 
   def shutdown
@@ -35,36 +42,25 @@ class SolrOutput < Fluent::BufferedOutput
   end
 
   def format(tag, time, record)
-    record.to_msgpack
+    [tag, time, record].to_msgpack
   end
 
   def write(chunk)
-    chunk.msgpack_each  { |record|
-      doc = Solr::Document.new(
-        :id => record["tag"] + "_" + Socket::gethostname + "_" + record["core"] + "_" + record["thread"] + "_" + record["timestamp"].gsub(/[\s\.:-]/, ""), 
-        :host_s => Socket::gethostname,
-        :timestamp_s => record["timestamp"],
-        :level_s => record["level"],
-        :thread_s => record["thread"],
-        :class_s => record["class"],
-        :core_s => record["core"],
-        :webapp_s => record["webapp"],
-        :path_s => record["path"],
-        :params_s => record["params"],
-        :hits_tl => record["hits"],
-        :status_ti => record["status"],
-        :qtime_tl => record["qtime"],
-        :time_tl => record["time"],
-        :tag_s => record["tag"]
-      )
-      request = Solr::Request::AddDocument.new(doc)
-      response = @connection.send(request)
-      if response.ok?
-        options={}
-        options.update(:softCommit => "true")
-        response = @connection.send(Solr::Request::Commit4.new(options))
+    bulk_docs = []
+    chunk.msgpack_each do |tag, time, record|
+      doc = record.inject({}) do |memo, data|
+        memo[to_solr_field(*data)] = data.last
       end
-    }
+      doc[tag_key] = tag
+      doc[time_key] = time
+      bulk_docs << doc
+    end
+
+    response = @connection.add(bulk_docs)
+  end
+
+  def to_solr_field(original_name, value)
+    original_name
   end
 
 end

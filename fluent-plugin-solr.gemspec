@@ -32,31 +32,33 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.8.10"
   s.summary = "Solr output plugin for Fluent event collector"
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
+  deps = {
+    :development => {
+        'bundler' => "~> 1.3.0",
+        'jeweler' => "~> 1.6.4"
+    },
+    :runtime => {
+        'fluentd' => "~> 0.10.39",
+        'rsolr'   => "~> 1.0.9"
+    }
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<shoulda>, [">= 0"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
-      s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_runtime_dependency(%q<fluentd>, ["~> 0.10.0"])
-      s.add_runtime_dependency(%q<solr-ruby>, ["~> 0.0.8"])
-    else
-      s.add_dependency(%q<shoulda>, [">= 0"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
-      s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<fluentd>, ["~> 0.10.0"])
-      s.add_dependency(%q<solr-ruby>, ["~> 0.0.8"])
+  }
+
+  s.specification_version = 3 if s.respond_to?(:specification_version)
+
+  if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+    deps.each_pair do |deps_type, gem_list|
+      gem_list.each_pair do |gem_name, version|
+        s.send(:"add_#{deps_type}_dependency", gem_name, [version])
+      end
     end
   else
-    s.add_dependency(%q<shoulda>, [">= 0"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
-    s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<fluentd>, ["~> 0.10.0"])
-    s.add_dependency(%q<solr-ruby>, ["~> 0.0.8"])
+    deps.each_pair do |_, gem_list|
+      gem_list.each_pair do |gem_name, version|
+        s.add_dependency gem_name, [version]
+      end
+    end
   end
+
 end
 
